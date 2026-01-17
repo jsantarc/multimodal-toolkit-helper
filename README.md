@@ -26,34 +26,25 @@ conda activate multimodal-toolkit
 jupyter notebook
 ```
 
-### Option 2: Python venv
+### Option 2: Docker (CPU only)
 
-Requires Python 3.10 installed (`brew install python@3.10` on macOS).
-
-```bash
-chmod +x setup_env_venv.sh
-./setup_env_venv.sh
-```
-
-Then activate and run:
-```bash
-source multimodal-toolkit-env/bin/activate
-jupyter notebook
-```
-
-### Option 3: Docker
+Note: Docker on Mac cannot access the GPU (MPS). Use Option 1 (Anaconda) for GPU acceleration on Apple Silicon.
 
 ```bash
 # Build
 docker build -t multimodal-toolkit .
 
-# Run
-docker run -p 8888:8888 -v $(pwd):/app multimodal-toolkit
+# Run (with 8GB memory for training)
+docker run -p 8888:8888 --memory=8g multimodal-toolkit
 ```
 
 Open the URL shown in the terminal.
 
-### Option 4: Manual Installation
+**Troubleshooting Docker:**
+- If the kernel dies during training, reduce `per_device_train_batch_size` in the notebook (try 4 or 2)
+- Increase Docker memory in Docker Desktop: Settings > Resources > Memory (12-16GB recommended)
+
+### Option 3: Manual Installation
 
 ```bash
 # Create environment with Python 3.10
@@ -86,7 +77,6 @@ python -m ipykernel install --user --name multimodal-toolkit --display-name "Pyt
 | `pyproject.toml` | Project dependencies (for `pip install -e .`) |
 | `requirements.txt` | Dependencies (for `pip install -r`) |
 | `setup_env_anaconda.sh` | Anaconda setup script |
-| `setup_env_venv.sh` | Python venv setup script |
 | `Dockerfile` | Docker setup |
 | `check_versions.py` | Verify installed package versions |
 
